@@ -99,17 +99,22 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className={`absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
-          <button className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-            Quick View
-          </button>
+          <Link 
+            href={`/products/${product._id}`}
+            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+          >
+            View Details
+          </Link>
         </div>
       </div>
 
       {/* Product Info */}
       <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-lg mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">
-          {product.name}
-        </h3>
+        <Link href={`/products/${product._id}`}>
+          <h3 className="font-semibold text-gray-900 text-lg mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors cursor-pointer">
+            {product.name}
+          </h3>
+        </Link>
         
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">
           {product.description}
