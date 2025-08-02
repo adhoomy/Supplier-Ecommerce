@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAddToCart } from '@/hooks/useAddToCart';
 
 interface ProductCardProps {
   product: {
@@ -20,6 +21,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart } = useAddToCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -132,8 +134,23 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          <button className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-            Add to Cart
+          <button 
+            onClick={() => addToCart({
+              id: product._id,
+              name: product.name,
+              price: product.price,
+              image: product.images[0],
+              category: product.category,
+              stock: product.stock,
+            })}
+            disabled={product.stock === 0}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              product.stock > 0
+                ? 'bg-gray-900 text-white hover:bg-gray-800'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>

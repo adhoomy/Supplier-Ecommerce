@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ProductsSection from "@/components/product/ProductsSection";
+import CartIcon from "@/components/cart/CartIcon";
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
+              <CartIcon />
               <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors">
                 Sign In
               </Link>
@@ -105,7 +107,7 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <ProductsSection />
+      <ProductsSection limit={8} showViewAll={true} />
 
       {/* Features Section - Gumroad Style */}
       <section className="py-20 bg-white">

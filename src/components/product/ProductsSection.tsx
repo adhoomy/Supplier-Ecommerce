@@ -14,7 +14,12 @@ interface Product {
   isActive: boolean;
 }
 
-export default function ProductsSection() {
+interface ProductsSectionProps {
+  limit?: number;
+  showViewAll?: boolean;
+}
+
+export default function ProductsSection({ limit = 8, showViewAll = true }: ProductsSectionProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +27,7 @@ export default function ProductsSection() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/products?limit=8');
+        const response = await fetch(`/api/products?limit=${limit}`);
         const data = await response.json();
         
         if (data.success) {
@@ -102,17 +107,19 @@ export default function ProductsSection() {
               ))}
             </div>
 
-            <div className="text-center">
-              <a
-                href="/products"
-                className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-              >
-                View All Products
-                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
-            </div>
+                         {showViewAll && (
+               <div className="text-center">
+                 <a
+                   href="/products"
+                   className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                 >
+                   View All Products
+                   <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                   </svg>
+                 </a>
+               </div>
+             )}
           </>
         ) : (
           <div className="text-center py-12">
