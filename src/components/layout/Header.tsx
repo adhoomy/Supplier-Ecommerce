@@ -1,7 +1,29 @@
+"use client";
+
 import Link from 'next/link';
 import CartIcon from '@/components/cart/CartIcon';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserState } from '@/hooks/useUserState';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Header() {
+  const { isAuthenticated, user, logout } = useAuth();
+  const { userProfile, getUserRole, isAdmin, isSupplier, isCustomer } = useUserState();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <header className="border-b border-gray-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,15 +46,76 @@ export default function Header() {
           </nav>
                        <div className="flex items-center space-x-4">
                <CartIcon />
-               <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors">
-                 Sign In
-               </Link>
-               <Link 
-                 href="/register" 
-                 className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-               >
-                 Get Started
-               </Link>
+                               {isAuthenticated ? (
+                  <div className="flex items-center space-x-4">
+                    <div className="relative" ref={userMenuRef}>
+                      <button
+                        onClick={() => setShowUserMenu(!showUserMenu)}
+                        className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        <span>Welcome, {user?.name}</span>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                          {getUserRole()}
+                        </span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      
+                      {showUserMenu && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                          <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">
+                            {userProfile?.email}
+                          </div>
+                          <Link
+                            href="/profile"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={() => setShowUserMenu(false)}
+                          >
+                            My Profile
+                          </Link>
+                          <Link
+                            href="/orders"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={() => setShowUserMenu(false)}
+                          >
+                            My Orders
+                          </Link>
+                          {isAdmin() && (
+                            <Link
+                              href="/admin"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setShowUserMenu(false)}
+                            >
+                              Admin Panel
+                            </Link>
+                          )}
+                          <button
+                            onClick={() => {
+                              logout();
+                              setShowUserMenu(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                                   <>
+                    <Link href="/auth/login" className="text-gray-600 hover:text-gray-900 transition-colors">
+                      Sign In
+                    </Link>
+                    <Link 
+                      href="/auth/register" 
+                      className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+               )}
              </div>
         </div>
       </div>
