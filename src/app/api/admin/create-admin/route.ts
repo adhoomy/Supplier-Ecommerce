@@ -6,7 +6,7 @@ const client = new MongoClient(process.env.MONGODB_URI!);
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password, isAdmin } = await request.json();
+    const { name, email, password } = await request.json();
 
     // Validate input
     if (!name || !email || !password) {
@@ -39,29 +39,29 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
+    // Create admin user
     const result = await db.collection("users").insertOne({
       name,
       email,
       password: hashedPassword,
-      role: isAdmin ? "admin" : "user",
+      role: "admin",
       createdAt: new Date(),
     });
 
     return NextResponse.json(
       {
-        message: "User created successfully",
+        message: "Admin user created successfully",
         user: {
           id: result.insertedId.toString(),
           name,
           email,
-          role: isAdmin ? "admin" : "user",
+          role: "admin",
         },
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Admin creation error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
