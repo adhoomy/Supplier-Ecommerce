@@ -38,12 +38,21 @@ export default function OrderSummary({ totalItems, totalPrice, onClearCart, vari
       </div>
 
       <div className="space-y-3">
-        <Link
-          href="/checkout"
-          className="w-full bg-black text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors text-center block"
-        >
-          Proceed to Checkout
-        </Link>
+        {/* Disabled Checkout Button */}
+        <div className="relative">
+          <button
+            disabled
+            className="w-full bg-gray-300 text-gray-500 py-3 px-4 rounded-lg font-medium cursor-not-allowed text-center block"
+          >
+            Checkout Disabled
+          </button>
+          <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="text-xs text-gray-600">
+              Checkout functionality is currently disabled.
+            </p>
+          </div>
+        </div>
+        
         {!isSidebar && (
           <Link
             href="/cart"

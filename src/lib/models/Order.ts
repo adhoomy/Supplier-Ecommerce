@@ -17,6 +17,13 @@ export interface IShippingAddress {
   zipCode: string;
 }
 
+export interface IPaymentDetails {
+  stripePaymentIntentId?: string;
+  status: 'pending' | 'paid' | 'failed' | 'refunded';
+  amount: number;
+  currency: string;
+}
+
 export interface IOrder extends Document {
   orderNumber: string;
   userId: string;
@@ -24,6 +31,7 @@ export interface IOrder extends Document {
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   shippingAddress: IShippingAddress;
+  paymentDetails?: IPaymentDetails;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -80,6 +88,26 @@ const ShippingAddressSchema = new Schema({
   }
 });
 
+const PaymentDetailsSchema = new Schema({
+  stripePaymentIntentId: {
+    type: String
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'paid', 'failed', 'refunded'],
+    default: 'pending'
+  },
+  amount: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  currency: {
+    type: String,
+    default: 'usd'
+  }
+});
+
 const OrderSchema: Schema = new Schema({
   orderNumber: {
     type: String,
@@ -100,7 +128,8 @@ const OrderSchema: Schema = new Schema({
     enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
     default: 'pending'
   },
-  shippingAddress: ShippingAddressSchema
+  shippingAddress: ShippingAddressSchema,
+  paymentDetails: PaymentDetailsSchema
 }, {
   timestamps: true
 });
