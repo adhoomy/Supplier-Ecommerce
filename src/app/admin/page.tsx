@@ -3,6 +3,7 @@
 import { useState } from "react";
 import UserManagement from "@/components/admin/UserManagement";
 import ProductManagement from "@/components/admin/ProductManagement";
+import OrderManagement from "@/components/admin/OrderManagement";
 import AdminProtected from "@/components/admin/AdminProtected";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -46,6 +47,16 @@ export default function AdminPage() {
                 }`}
               >
                 Product Management
+              </button>
+              <button
+                onClick={() => setActiveTab("orders")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "orders"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                Order Management
               </button>
               <a
                 href="/admin/create"
@@ -101,7 +112,10 @@ export default function AdminPage() {
                     <p className="text-purple-700 mb-4">
                       View and manage customer orders
                     </p>
-                    <button className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                    <button 
+                      onClick={() => setActiveTab("orders")}
+                      className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
+                    >
                       View Orders
                     </button>
                   </div>
@@ -180,6 +194,10 @@ export default function AdminPage() {
 
           {activeTab === "products" && (
             <ProductManagement />
+          )}
+
+          {activeTab === "orders" && (
+            <OrderManagement />
           )}
         </div>
       </div>
