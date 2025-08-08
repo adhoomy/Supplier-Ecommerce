@@ -4,7 +4,7 @@ import { useCartStore } from '@/store/cartStore';
 import { CartItem } from '@/types/cart';
 
 export const useAddToCart = () => {
-  const { addItem, openCart } = useCartStore();
+  const { addItem } = useCartStore();
 
   const addToCart = (product: {
     id: string;
@@ -15,8 +15,6 @@ export const useAddToCart = () => {
     stock: number;
   }) => {
     addItem(product);
-    // Optionally open the cart when an item is added
-    // openCart();
   };
 
   return { addToCart };

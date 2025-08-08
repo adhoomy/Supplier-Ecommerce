@@ -12,7 +12,6 @@ export interface CartState {
   items: CartItem[];
   totalItems: number;
   totalPrice: number;
-  isOpen: boolean;
 }
 
 export interface CartActions {
@@ -20,9 +19,6 @@ export interface CartActions {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  toggleCart: () => void;
-  openCart: () => void;
-  closeCart: () => void;
 }
 
 export type CartStore = CartState & CartActions; 

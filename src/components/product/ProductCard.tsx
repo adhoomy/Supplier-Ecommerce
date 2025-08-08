@@ -21,6 +21,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const { addToCart } = useAddToCart();
 
   const formatPrice = (price: number) => {
@@ -43,6 +44,24 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const getCategoryLabel = (category: string) => {
     return category.charAt(0).toUpperCase() + category.slice(1);
+  };
+
+  const handleAddToCart = async () => {
+    if (product.stock === 0) return;
+    
+    setIsAddingToCart(true);
+    try {
+      await addToCart({
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+        category: product.category,
+        stock: product.stock,
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   return (
@@ -68,7 +87,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.images.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setImageIndex(index)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setImageIndex(index);
+                }}
                 className={`w-2 h-2 rounded-full transition-all ${
                   index === imageIndex 
                     ? 'bg-white shadow-sm' 
@@ -80,14 +103,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* Category Badge */}
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(product.category)}`}>
             {getCategoryLabel(product.category)}
           </span>
         </div>
 
         {/* Stock Badge */}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
             product.stock > 0 
               ? 'bg-green-100 text-green-800' 
@@ -103,7 +126,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         }`}>
           <Link 
             href={`/products/${product._id}`}
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+            className="bg-white text-gray-900 px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-sm sm:text-base"
           >
             View Details
           </Link>
@@ -111,9 +134,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         <Link href={`/products/${product._id}`}>
-          <h3 className="font-semibold text-gray-900 text-lg mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors cursor-pointer">
+          <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors cursor-pointer">
             {product.name}
           </h3>
         </Link>
@@ -124,7 +147,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-lg sm:text-2xl font-bold text-gray-900">
               {formatPrice(product.price)}
             </span>
             {product.stock > 0 && (
@@ -135,22 +158,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           <button 
-            onClick={() => addToCart({
-              id: product._id,
-              name: product.name,
-              price: product.price,
-              image: product.images[0],
-              category: product.category,
-              stock: product.stock,
-            })}
-            disabled={product.stock === 0}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              product.stock > 0
+            onClick={handleAddToCart}
+            disabled={product.stock === 0 || isAddingToCart}
+            className={`px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors ${
+              product.stock > 0 && !isAddingToCart
                 ? 'bg-gray-900 text-white hover:bg-gray-800'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+            {isAddingToCart ? 'Adding...' : product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>

@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
 import Link from "next/link";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface OrderItem {
   productId: string;
@@ -105,10 +107,7 @@ export default function OrdersPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
+        <LoadingSpinner size="lg" text="Loading..." />
       </div>
     );
   }
@@ -121,9 +120,9 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
           <p className="text-gray-600">
             Welcome back, {user?.name}! Here's your order history.
           </p>
@@ -144,45 +143,32 @@ export default function OrdersPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading your orders...</p>
+            <LoadingSpinner size="lg" text="Loading your orders..." />
           </div>
         ) : orders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <svg
-              className="mx-auto h-16 w-16 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No orders yet</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              You haven't placed any orders yet. Start shopping to see your order history here!
-            </p>
-            <Link
-              href="/products"
-              className="inline-flex items-center px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
-            >
-              Browse Products
-            </Link>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 sm:p-12">
+            <EmptyState
+              title="No orders yet"
+              description="You haven't placed any orders yet. Start shopping to see your order history here!"
+              icon={
+                <svg className="h-12 w-12 sm:h-16 sm:w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              }
+              actionText="Browse Products"
+              actionHref="/products"
+            />
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {orders.map((order) => (
               <div key={order._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 {/* Order Header */}
-                <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center space-x-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                           {order.orderNumber}
                         </h3>
                         <p className="text-sm text-gray-600">
@@ -191,10 +177,10 @@ export default function OrdersPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-4 mt-2 sm:mt-0">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                      <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                         {getStatusText(order.status)}
                       </span>
-                      <span className="text-lg font-semibold text-gray-900">
+                      <span className="text-base sm:text-lg font-semibold text-gray-900">
                         ${order.total.toFixed(2)}
                       </span>
                     </div>
@@ -202,12 +188,12 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Order Items */}
-                <div className="px-6 py-4">
+                <div className="px-4 sm:px-6 py-4">
                   <div className="space-y-3">
                     {order.items.map((item) => (
                       <div key={item.productId} className="flex justify-between items-center">
                         <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-md flex items-center justify-center">
                             <span className="text-xs text-gray-600">IMG</span>
                           </div>
                           <div>
@@ -224,11 +210,11 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Order Footer */}
-                <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="px-4 sm:px-6 py-4 border-t border-gray-200 bg-gray-50">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="text-sm text-gray-600">
                       <p>Shipped to: {order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
-                      <p>{order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
+                      <p className="text-xs sm:text-sm">{order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
                     </div>
                     <div className="mt-2 sm:mt-0">
                       <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">

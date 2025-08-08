@@ -9,7 +9,6 @@ export const useCartStore = create<CartStore>()(
       items: [],
       totalItems: 0,
       totalPrice: 0,
-      isOpen: false,
 
       // Actions
       addItem: (item: Omit<CartItem, 'quantity'>) => {
@@ -88,20 +87,6 @@ export const useCartStore = create<CartStore>()(
           totalItems: 0,
           totalPrice: 0,
         });
-      },
-
-      toggleCart: () => {
-        set((state) => ({
-          isOpen: !state.isOpen,
-        }));
-      },
-
-      openCart: () => {
-        set({ isOpen: true });
-      },
-
-      closeCart: () => {
-        set({ isOpen: false });
       },
     }),
     {
