@@ -1,4 +1,11 @@
 import { ObjectId } from 'mongodb';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+export interface AdminCheckResult {
+  isAdmin: boolean;
+  error?: string;
+}
 
 export interface User {
   _id: ObjectId;
@@ -117,7 +124,7 @@ export async function checkAdminStatus(): Promise<AdminCheckResult> {
 /**
  * Client-side function to check if the current user is an admin
  */
-export function isAdminClient(session: any): boolean {
+export function isAdminClient(session: { user?: { role?: string } } | null): boolean {
   return session?.user?.role === "admin";
 }
 
