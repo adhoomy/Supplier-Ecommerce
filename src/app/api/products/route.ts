@@ -1,130 +1,97 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Product from '@/lib/models/Product';
+import { connectToDatabase } from '@/lib/mongodb';
 
-// GET all products with filtering, pagination, search, and sorting
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
-    
     const { searchParams } = new URL(request.url);
-    
-    // Query parameters
-    const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const search = searchParams.get('search') || '';
-    const category = searchParams.get('category') || '';
-    const minPrice = parseFloat(searchParams.get('minPrice') || '0');
-    const maxPrice = parseFloat(searchParams.get('maxPrice') || '999999');
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
-    const inStock = searchParams.get('inStock') || '';
-    
-    // Build filter object
-    const filter: any = { isActive: true };
-    
-    // Category filter
+    const category = searchParams.get('category');
+    const search = searchParams.get('search');
+
+    const { db } = await connectToDatabase();
+
+    let query: Record<string, unknown> = {};
+
+    // Add category filter if provided
     if (category) {
-      filter.category = category;
+      query.category = category;
     }
-    
-    // Price range filter
-    if (minPrice > 0 || maxPrice < 999999) {
-      filter.price = { $gte: minPrice, $lte: maxPrice };
-    }
-    
-    // Stock filter
-    if (inStock === 'true') {
-      filter.stock = { $gt: 0 };
-    } else if (inStock === 'false') {
-      filter.stock = 0;
-    }
-    
-    // Search filter (search in name and description)
+
+    // Add search filter if provided
     if (search) {
-      filter.$or = [
+      query.$or = [
         { name: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } }
       ];
     }
-    
-    // Build sort object
-    const sort: any = {};
-    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
-    
-    // Calculate skip value for pagination
-    const skip = (page - 1) * limit;
-    
-    // Execute query with pagination
-    const [products, totalProducts] = await Promise.all([
-      Product.find(filter)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Product.countDocuments(filter)
-    ]);
-    
-    // Calculate pagination info
-    const totalPages = Math.ceil(totalProducts / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
-    
-    return NextResponse.json({ 
-      success: true, 
-      data: products,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalProducts,
-        hasNextPage,
-        hasPrevPage,
-        limit
-      },
-      filters: {
-        search,
-        category,
-        minPrice,
-        maxPrice,
-        inStock,
-        sortBy,
-        sortOrder
-      }
-    });
+
+    const products = await db
+      .collection('products')
+      .find(query)
+      .limit(limit)
+      .toArray() as Product[];
+
+    return NextResponse.json({ products });
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to fetch products',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Failed to fetch products' },
       { status: 500 }
     );
   }
 }
 
-// POST create new product
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
     const body = await request.json();
-    
-    const product = await Product.create(body);
-    
-    return NextResponse.json({ 
-      success: true, 
-      data: product,
-      message: 'Product created successfully'
-    }, { status: 201 });
+    const { name, description, price, category, stock, images } = body;
+
+    // Validate required fields
+    if (!name || !description || !price || !category || !stock) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const { db } = await connectToDatabase();
+
+    const product = {
+      name,
+      description,
+      price: parseFloat(price),
+      category,
+      stock: parseInt(stock),
+      images: images || [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const result = await db.collection('products').insertOne(product);
+
+    return NextResponse.json(
+      { 
+        message: 'Product created successfully',
+        productId: result.insertedId 
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating product:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to create product',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Failed to create product' },
       { status: 500 }
     );
   }
