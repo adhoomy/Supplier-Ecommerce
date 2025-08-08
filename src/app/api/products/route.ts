@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import connectDB from '@/lib/mongodb';
+import mongoose from 'mongoose';
 
 interface Product {
   _id: string;
@@ -20,9 +21,10 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const search = searchParams.get('search');
 
-    const { db } = await connectToDatabase();
+    await connectDB();
+    const db = mongoose.connection.db;
 
-    let query: Record<string, unknown> = {};
+    const query: Record<string, unknown> = {};
 
     // Add category filter if provided
     if (category) {
@@ -66,7 +68,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { db } = await connectToDatabase();
+    await connectDB();
+    const db = mongoose.connection.db;
 
     const product = {
       name,

@@ -177,7 +177,7 @@ export default function ContactPage() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">What's your return policy?</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">What&apos;s your return policy?</h3>
                   <p className="text-gray-600 text-sm">
                     We offer a 30-day return policy for most items. Contact us if you have any issues with your order.
                   </p>

@@ -1,0 +1,5 @@
+[33m1075891[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix remaining ESLint errors and add ESLint config
+[33m9e25285[m Fix ESLint errors for Vercel deployment
+[33m855fb78[m Add Vercel configuration
+[33m23a7517[m Remove cart popup, fix cart icon, improve mobile layout, add loading states, and fix navigation
+[33mb7f9243[m Add admin order management features
