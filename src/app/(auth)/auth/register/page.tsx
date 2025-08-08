@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 
-export default function Register() {
+function RegisterForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -191,5 +191,17 @@ export default function Register() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 } 
