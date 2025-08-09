@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   try {
     // Verify that the current user is an admin
     const authResult = await verifyAdminAuth(request);
-    if (!authResult.isAdmin) {
+    if (!authResult.isAdmin || !authResult.user) {
       return NextResponse.json(
         { message: authResult.error || "Access denied" },
         { status: 403 }
