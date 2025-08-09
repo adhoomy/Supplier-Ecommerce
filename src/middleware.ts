@@ -30,12 +30,12 @@ export default withAuth(
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Only apply middleware to specific protected routes
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/admin/:path*",
+    "/checkout/:path*", 
+    "/orders/:path*",
+    "/profile/:path*",
+    "/cart/:path*"
   ],
 }; 
