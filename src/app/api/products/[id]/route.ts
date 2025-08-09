@@ -5,9 +5,10 @@ import Product from '@/lib/models/Product';
 // GET single product by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { params } = await context.params;
     await connectDB();
     
     const product = await Product.findById(params.id).lean();
@@ -42,9 +43,10 @@ export async function GET(
 // PUT update product by ID
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { params } = await context.params;
     await connectDB();
     const body = await request.json();
     
@@ -85,9 +87,10 @@ export async function PUT(
 // DELETE product by ID
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { params } = await context.params;
     await connectDB();
     
     const product = await Product.findByIdAndDelete(params.id).lean();
