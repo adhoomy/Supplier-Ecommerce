@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import connectDB from '@/lib/mongodb';
+import Product from '@/lib/models/Product';
 
 interface ProductDetailPageProps {
   params: {
@@ -10,19 +12,19 @@ interface ProductDetailPageProps {
 
 async function getProduct(id: string) {
   try {
-    // For server-side rendering, use relative URL
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/products/${id}`, {
-      cache: 'no-store'
-    });
+    await connectDB();
     
-    if (!response.ok) {
+    const product = await Product.findById(id).lean();
+    
+    if (!product) {
+      console.log('Product not found in database:', id);
       return null;
     }
     
-    const result = await response.json();
-    return result.success ? result.data : null;
+    console.log('Product found:', product.name);
+    return product;
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error('Error fetching product from database:', error);
     return null;
   }
 }
