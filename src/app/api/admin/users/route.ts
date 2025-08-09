@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI!);
 
@@ -75,7 +75,7 @@ export async function PUT(request: NextRequest) {
     
     // Check if the target user is currently an admin
     const targetUser = await db.collection("users").findOne(
-      { _id: new MongoClient.ObjectId(userId) }
+      { _id: new ObjectId(userId) }
     );
     
     if (targetUser?.role === "admin") {
@@ -87,7 +87,7 @@ export async function PUT(request: NextRequest) {
     
     // Update user role
     const result = await db.collection("users").updateOne(
-      { _id: new MongoClient.ObjectId(userId) },
+      { _id: new ObjectId(userId) },
       { $set: { role } }
     );
 
@@ -139,7 +139,7 @@ export async function DELETE(request: NextRequest) {
     
     // Delete user
     const result = await db.collection("users").deleteOne({
-      _id: new MongoClient.ObjectId(userId)
+      _id: new ObjectId(userId)
     });
 
     if (result.deletedCount === 0) {
