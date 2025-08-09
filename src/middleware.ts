@@ -10,11 +10,11 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         // Protect admin routes
-        if (req.nextUrl.pathname.startsWith("/admin")) {
+        if (req.nextUrl?.pathname?.startsWith("/admin")) {
           return token?.role === "admin";
         }
         // Protect checkout and orders routes - requires authentication
-        if (req.nextUrl.pathname.startsWith("/checkout") || req.nextUrl.pathname.startsWith("/orders")) {
+        if (req.nextUrl?.pathname?.startsWith("/checkout") || req.nextUrl?.pathname?.startsWith("/orders")) {
           return !!token; // Must be authenticated
         }
         // Allow all other routes

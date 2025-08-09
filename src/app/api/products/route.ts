@@ -45,7 +45,10 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .toArray() as Product[];
 
-    return NextResponse.json({ products });
+    return NextResponse.json({ 
+      success: true, 
+      data: products 
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(

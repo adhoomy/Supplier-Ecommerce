@@ -40,7 +40,7 @@ export default function OrdersPage() {
       const response = await fetch('/api/orders');
       if (response.ok) {
         const data = await response.json();
-        setOrders(data.orders || []);
+        setOrders(data.data || []);
       } else {
         setError('Failed to fetch orders');
       }

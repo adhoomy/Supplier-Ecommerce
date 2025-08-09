@@ -27,7 +27,10 @@ export async function GET(request: NextRequest) {
       { projection: { password: 0 } }
     ).toArray();
 
-    return NextResponse.json(users);
+    return NextResponse.json({ 
+      success: true, 
+      data: users 
+    });
   } catch (error) {
     console.error("Error fetching users:", error);
     return NextResponse.json(

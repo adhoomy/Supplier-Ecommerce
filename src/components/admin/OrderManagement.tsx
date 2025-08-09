@@ -60,7 +60,7 @@ export default function OrderManagement() {
       }
       
       const data = await response.json();
-      setOrders(data);
+      setOrders(data.data || []);
     } catch (error) {
       console.error('Error loading orders:', error);
       setAlert({ type: 'error', message: 'Failed to load orders' });

@@ -24,7 +24,10 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 })
       .lean();
 
-    return NextResponse.json(orders);
+    return NextResponse.json({ 
+      success: true, 
+      data: orders 
+    });
   } catch (error) {
     console.error('Error fetching orders:', error);
     return NextResponse.json(
@@ -79,7 +82,10 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(updatedOrder);
+    return NextResponse.json({ 
+      success: true, 
+      data: updatedOrder 
+    });
   } catch (error) {
     console.error('Error updating order:', error);
     return NextResponse.json(
