@@ -10,7 +10,8 @@ interface ProductDetailPageProps {
 
 async function getProduct(id: string) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/products/${id}`, {
+    // For server-side rendering, use relative URL
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/products/${id}`, {
       cache: 'no-store'
     });
     
