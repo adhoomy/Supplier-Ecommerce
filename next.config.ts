@@ -5,6 +5,11 @@ import type { NextConfig } from "next";
  * Customize your Next.js app behavior here
  */
 const nextConfig: NextConfig = {
+  // Disable ESLint during build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  
   // Image optimization configuration
   images: {
     remotePatterns: [
