@@ -1,39 +1,104 @@
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import connectDB from '@/lib/mongodb';
-import Product from '@/lib/models/Product';
+import { useAuth } from '@/hooks/useAuth';
+import { useAddToCart } from '@/hooks/useAddToCart';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 
-interface ProductDetailPageProps {
-  params: {
-    id: string;
-  };
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  images: string[];
+  stock: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-async function getProduct(id: string) {
-  try {
-    await connectDB();
-    
-    const product = await Product.findById(id).lean();
-    
-    if (!product) {
-      console.log('Product not found in database:', id);
-      return null;
+export default function ProductDetailPage() {
+  const params = useParams();
+  const productId = params.id as string;
+  const { isAuthenticated } = useAuth();
+  const { addToCart } = useAddToCart();
+  
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [addingToCart, setAddingToCart] = useState(false);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(`/api/products/${productId}`);
+        
+        if (!response.ok) {
+          throw new Error('Product not found');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          setProduct(result.data);
+        } else {
+          throw new Error(result.message || 'Failed to fetch product');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch product');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProduct();
     }
+  }, [productId]);
+
+  const handleAddToCart = async () => {
+    if (!product || !isAuthenticated) return;
     
-    console.log('Product found:', product.name);
-    return product;
-  } catch (error) {
-    console.error('Error fetching product from database:', error);
-    return null;
+    setAddingToCart(true);
+    try {
+      await addToCart({
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+        category: product.category,
+        stock: product.stock,
+      });
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <LoadingSpinner size="lg" text="Loading product..." />
+      </div>
+    );
   }
-}
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const product = await getProduct(params.id);
-
-  if (!product) {
-    notFound();
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <ErrorMessage 
+          message={error || 'Product not found'} 
+          onRetry={() => window.location.reload()}
+        />
+      </div>
+    );
   }
 
   const formatPrice = (price: number) => {
@@ -185,17 +250,27 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               <div className="space-y-4 sm:space-y-6 pt-6 sm:pt-8">
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button 
+                    onClick={handleAddToCart}
+                    disabled={product.stock === 0 || !isAuthenticated || addingToCart}
                     className={`flex-1 py-4 sm:py-6 px-6 sm:px-8 rounded-xl sm:rounded-2xl text-lg sm:text-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg ${
-                      product.stock > 0
+                      product.stock > 0 && isAuthenticated && !addingToCart
                         ? 'bg-black text-white hover:bg-gray-800'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
-                    disabled={product.stock === 0}
                   >
-                    {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                    {addingToCart ? 'Adding...' : 
+                     !isAuthenticated ? 'Sign In to Add to Cart' :
+                     product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                   </button>
-                  <button className="flex-1 py-4 sm:py-6 px-6 sm:px-8 border-2 border-gray-300 text-gray-700 rounded-xl sm:rounded-2xl text-lg sm:text-xl font-semibold hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
-                    Buy Now
+                  <button 
+                    disabled={!isAuthenticated}
+                    className={`flex-1 py-4 sm:py-6 px-6 sm:px-8 border-2 border-gray-300 rounded-xl sm:rounded-2xl text-lg sm:text-xl font-semibold transition-all duration-200 transform hover:scale-105 ${
+                      isAuthenticated 
+                        ? 'text-gray-700 hover:bg-gray-50' 
+                        : 'text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {isAuthenticated ? 'Buy Now' : 'Sign In to Buy'}
                   </button>
                 </div>
                 
