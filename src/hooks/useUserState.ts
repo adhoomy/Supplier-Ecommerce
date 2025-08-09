@@ -46,7 +46,7 @@ export function useUserState() {
       // For now, we'll just update the local state
       setUserProfile(prev => prev ? { ...prev, ...updates } : null);
       
-      // TODO: Add API call to update user profile in database
+      // Update user profile in database (implement when needed)
       // const response = await fetch('/api/user/profile', {
       //   method: 'PUT',
       //   headers: { 'Content-Type': 'application/json' },
