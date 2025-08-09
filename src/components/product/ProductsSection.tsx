@@ -5,6 +5,7 @@ import ProductCard from './ProductCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import EmptyState from '@/components/ui/EmptyState';
+import Link from 'next/link';
 
 interface Product {
   _id: string;
@@ -116,7 +117,7 @@ export default function ProductsSection({ limit = 8, showViewAll = true }: Produ
 
             {showViewAll && (
               <div className="text-center">
-                <a
+                <Link
                   href="/products"
                   className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
                 >
@@ -124,7 +125,7 @@ export default function ProductsSection({ limit = 8, showViewAll = true }: Produ
                   <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </a>
+                </Link>
               </div>
             )}
           </>

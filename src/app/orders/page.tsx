@@ -5,6 +5,7 @@ import { useUserState } from '@/hooks/useUserState';
 import Header from '@/components/layout/Header';
 import { useEffect, useState } from 'react';
 import { Package, Calendar, DollarSign, Truck } from 'lucide-react';
+import Link from 'next/link';
 
 interface Order {
   _id: string;
@@ -125,12 +126,12 @@ export default function OrdersPage() {
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">No Orders Yet</h2>
             <p className="text-gray-600 mb-6">You haven&apos;t placed any orders yet.</p>
-            <a
+            <Link
               href="/products"
               className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-gray-800"
             >
               Start Shopping
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="space-y-6">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SetupAdminPage() {
   const [formData, setFormData] = useState({
@@ -494,12 +495,12 @@ export default function SetupAdminPage() {
         )}
 
         <div className="mt-6 text-center">
-          <a
+          <Link
             href="/"
             className="text-blue-600 hover:text-blue-500 text-sm"
           >
             Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
