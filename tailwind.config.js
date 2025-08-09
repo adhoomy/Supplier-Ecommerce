@@ -7,10 +7,13 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      // Custom color palette can be added here
+      colors: {
+        // Example: 'primary': '#3B82F6',
+      },
+      // Custom animations can be added here
+      animation: {
+        // Example: 'fade-in': 'fadeIn 0.5s ease-in-out',
       },
     },
   },

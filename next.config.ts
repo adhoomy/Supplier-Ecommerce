@@ -1,16 +1,11 @@
 import type { NextConfig } from "next";
 
+/**
+ * Next.js configuration
+ * Customize your Next.js app behavior here
+ */
 const nextConfig: NextConfig = {
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has type errors.
-    ignoreBuildErrors: true,
-  },
+  // Image optimization configuration
   images: {
     remotePatterns: [
       {
@@ -27,6 +22,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  
+  // Experimental features (uncomment if needed)
+  // experimental: {
+  //   serverActions: true,
+  // },
+  
+  // Redirects (uncomment if needed)
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/old-page',
+  //       destination: '/new-page',
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

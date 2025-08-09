@@ -1,38 +1,71 @@
-# SupplierHub - Business Supplies E-commerce Platform
+# SupplierHub 🚀
 
-A modern, full-stack e-commerce platform built with Next.js, TypeScript, and Tailwind CSS for business supplies and equipment. Features a complete shopping experience with authentication, cart management, payment processing, and admin panel.
+A modern, full-stack e-commerce platform built for business supplies and equipment. Built with Next.js 15, TypeScript, and Tailwind CSS.
+
+![Next.js](https://img.shields.io/badge/Next.js-15.4.5-black)
+![React](https://img.shields.io/badge/React-19.1.0-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-blue)
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [Configuration](#-configuration)
+- [Security Features](#-security-features)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [Support](#-support)
 
 ## ✨ Features
 
-- 🛒 **Shopping Cart** - Add items, manage quantities, and checkout
-- 🔐 **Authentication** - Secure user registration and login with NextAuth.js
-- 💳 **Payment Processing** - Stripe integration for secure payments
-- 👨‍💼 **Admin Panel** - Product management, order tracking, user management
-- 📱 **Responsive Design** - Works perfectly on all devices
-- 🎨 **Modern UI** - Clean, professional interface with Gumroad-style design
-- ⚡ **Fast Performance** - Optimized for speed with Next.js 15
-- 🗄️ **Database** - MongoDB with Mongoose for data persistence
-- 🖼️ **Image Upload** - Cloudinary integration for product images
+### 🛒 Shopping Experience
+- **Product Catalog** - Browse products with filtering and search
+- **Shopping Cart** - Add items, manage quantities, and checkout
+- **Secure Checkout** - Stripe-powered payment processing
+- **Order Management** - Track order status and history
+
+### 🔐 Authentication & Security
+- **User Registration** - Secure account creation with validation
+- **NextAuth.js Integration** - JWT-based authentication
+- **Role-Based Access** - User and Admin roles with proper permissions
+- **Password Security** - Strong password requirements and validation
+
+### 👨‍💼 Admin Panel
+- **Product Management** - Add, edit, and delete products
+- **Order Management** - View and update order status
+- **User Management** - Monitor user accounts and roles
+- **Database Management** - Secure seeding and clearing (development only)
+
+### 🎨 User Interface
+- **Responsive Design** - Mobile-first approach
+- **Modern UI** - Clean, professional interface
+- **Performance Optimized** - Fast loading with Next.js 15
+- **Accessibility** - WCAG compliant components
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS
-- **Authentication**: NextAuth.js with JWT
-- **Database**: MongoDB with Mongoose
-- **Payments**: Stripe
-- **State Management**: Zustand
-- **Image Storage**: Cloudinary
-- **Deployment**: Vercel
+| Category | Technology |
+|----------|------------|
+| **Frontend** | Next.js 15, React 19, TypeScript |
+| **Styling** | Tailwind CSS 4 |
+| **Authentication** | NextAuth.js with JWT |
+| **Database** | MongoDB with Mongoose |
+| **Payments** | Stripe |
+| **State Management** | Zustand |
+| **Image Storage** | Cloudinary |
+| **Deployment** | Vercel |
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ 
-- MongoDB database
-- Stripe account
-- Cloudinary account
+- **Node.js** 18+ 
+- **MongoDB** database
+- **Stripe** account
+- **Cloudinary** account
 
 ### Installation
 
@@ -47,174 +80,221 @@ A modern, full-stack e-commerce platform built with Next.js, TypeScript, and Tai
    npm install
    ```
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory with the following variables:
-
+3. **Environment Setup**
+   Create a `.env.local` file in the root directory:
    ```env
    # Database
    MONGODB_URI=your_mongodb_connection_string
    
    # Authentication
    NEXTAUTH_SECRET=your_nextauth_secret_key
-   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_URL=http://localhost:3001
    
-   # Stripe (for payments)
+   # Stripe
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
    STRIPE_SECRET_KEY=your_stripe_secret_key
    
-   # Cloudinary (for image uploads)
+   # Cloudinary
    CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
    CLOUDINARY_API_KEY=your_cloudinary_api_key
    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    ```
 
-4. **Run development server**
+4. **Start development server**
    ```bash
    npm run dev
    ```
+   Your app will be available at `http://localhost:3001`
 
-5. **Seed the database** (optional)
-   Visit `http://localhost:3000/api/seed` to populate the database with sample products.
-
-6. **Set up admin user** (optional)
-   Visit `http://localhost:3000/setup-admin` to create an admin account.
+5. **Initial Setup**
+   - Visit `/setup-admin` to create your first admin account
+   - This page is only accessible when no admin accounts exist
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                    # Next.js app router
-│   ├── api/               # API routes
-│   ├── (auth)/            # Authentication pages
-│   ├── (dashboard)/       # Dashboard pages
-│   ├── admin/             # Admin panel
-│   ├── products/          # Product pages
-│   └── ...
-├── components/            # React components
-│   ├── admin/            # Admin components
-│   ├── auth/             # Authentication components
-│   ├── cart/             # Shopping cart components
-│   ├── layout/           # Layout components
-│   ├── product/          # Product components
-│   └── ui/               # UI components
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility libraries
-├── store/                # Zustand state management
-└── types/                # TypeScript type definitions
+supplier-ecommerce/
+├── src/
+│   ├── app/                    # Next.js app router
+│   │   ├── api/               # API routes
+│   │   │   ├── admin/         # Admin API endpoints
+│   │   │   ├── auth/          # Authentication endpoints
+│   │   │   ├── products/      # Product management
+│   │   │   ├── orders/        # Order processing
+│   │   │   └── payment/       # Stripe integration
+│   │   ├── (auth)/            # Authentication pages
+│   │   ├── admin/             # Admin panel
+│   │   ├── products/          # Product pages
+│   │   └── ...                # Other pages
+│   ├── components/            # React components
+│   │   ├── admin/            # Admin components
+│   │   ├── cart/             # Shopping cart
+│   │   ├── layout/           # Layout components
+│   │   ├── product/          # Product components
+│   │   └── ui/               # UI components
+│   ├── hooks/                # Custom React hooks
+│   ├── lib/                  # Utility libraries
+│   ├── store/                # Zustand state management
+│   └── types/                # TypeScript definitions
+├── public/                   # Static assets
+├── tailwind.config.js        # Tailwind configuration
+└── next.config.ts            # Next.js configuration
 ```
 
-## 🔧 Configuration
+## ⚙️ Configuration
 
 ### Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `MONGODB_URI` | MongoDB connection string | ✅ |
-| `NEXTAUTH_SECRET` | Secret key for NextAuth.js | ✅ |
-| `NEXTAUTH_URL` | Base URL for NextAuth.js | ✅ |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | ✅ |
-| `STRIPE_SECRET_KEY` | Stripe secret key | ✅ |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | ✅ |
-| `CLOUDINARY_API_KEY` | Cloudinary API key | ✅ |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret | ✅ |
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `MONGODB_URI` | MongoDB connection string | ✅ | `mongodb+srv://...` |
+| `NEXTAUTH_SECRET` | NextAuth.js secret key | ✅ | `your-secret-key` |
+| `NEXTAUTH_URL` | Base URL for NextAuth.js | ✅ | `http://localhost:3001` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | ✅ | `pk_test_...` |
+| `STRIPE_SECRET_KEY` | Stripe secret key | ✅ | `sk_test_...` |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | ✅ | `your-cloud-name` |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | ✅ | `123456789` |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | ✅ | `your-api-secret` |
 
 ### Database Setup
 
-1. Create a MongoDB database (MongoDB Atlas recommended)
-2. Get your connection string
-3. Add it to your environment variables
+1. **MongoDB Atlas** (Recommended)
+   - Create a free cluster
+   - Get your connection string
+   - Add to environment variables
+
+2. **Local MongoDB**
+   - Install MongoDB locally
+   - Use connection string: `mongodb://localhost:27017/supplier-ecommerce`
 
 ### Stripe Setup
 
-1. Create a Stripe account
-2. Get your API keys from the Stripe dashboard
-3. Add them to your environment variables
+1. Create a [Stripe account](https://stripe.com)
+2. Get your API keys from the dashboard
+3. Add keys to environment variables
+4. Configure webhook endpoints
 
 ### Cloudinary Setup
 
-1. Create a Cloudinary account
+1. Create a [Cloudinary account](https://cloudinary.com)
 2. Get your cloud name, API key, and secret
-3. Add them to your environment variables
+3. Add credentials to environment variables
+
+## 🛡️ Security Features
+
+### Database Protection
+- **Admin-Only Seeding** - Database seeding requires admin authentication
+- **Production Safety** - Seeding automatically disabled in production
+- **Confirmation Required** - Destructive operations need explicit confirmation
+
+### Authentication Security
+- **Strong Passwords** - Enforced password requirements
+- **Email Validation** - Comprehensive email verification
+- **Role-Based Access** - Strict permission controls
+- **Session Management** - Secure JWT handling
+
+### API Security
+- **Middleware Protection** - Critical routes protected by auth
+- **Input Validation** - All user inputs validated and sanitized
+- **Rate Limiting** - Protection against abuse
+- **CORS Configuration** - Proper cross-origin handling
 
 ## 🚀 Deployment
 
 ### Vercel Deployment
 
-1. **Connect to GitHub**
-   - Push your code to GitHub
-   - Connect your repository to Vercel
+1. **Connect Repository**
+   ```bash
+   # Push to GitHub
+   git push origin main
+   
+   # Connect to Vercel
+   # Import your GitHub repository
+   ```
 
-2. **Set environment variables**
+2. **Environment Variables**
    - Add all environment variables in Vercel dashboard
    - Use production URLs (e.g., `https://your-domain.vercel.app`)
 
 3. **Deploy**
-   - Vercel will automatically build and deploy your app
-   - Each push to main branch triggers a new deployment
+   - Vercel automatically builds and deploys
+   - Each push to main triggers deployment
 
-### Post-Deployment Setup
+### Post-Deployment
 
-1. **Seed the database**
-   Visit `https://your-domain.vercel.app/api/seed` to add sample products
+1. **Create Admin Account**
+   - Visit `/setup-admin` to create initial admin
+   - Only works when no admin accounts exist
 
-2. **Create admin user**
-   Visit `https://your-domain.vercel.app/setup-admin` to create admin account
-
-## 🔐 Authentication
-
-The app uses NextAuth.js with JWT strategy:
-
-- **User Registration**: Email/password registration
-- **User Login**: Email/password authentication
-- **Role-based Access**: User, Admin roles
-- **Session Management**: Automatic session handling
-
-## 🛒 Shopping Features
-
-- **Product Browsing**: View all products with filtering
-- **Product Details**: Detailed product pages with images
-- **Shopping Cart**: Add/remove items, quantity management
-- **Checkout**: Secure payment processing with Stripe
-- **Order Management**: Track order status and history
-
-## 👨‍💼 Admin Features
-
-- **Product Management**: Add, edit, delete products
-- **Order Management**: View and update order status
-- **User Management**: View user accounts and roles
-- **Dashboard**: Overview of sales and activity
-
-## 🐛 Recent Fixes
-
-- ✅ Fixed API response format for Vercel deployment
-- ✅ Resolved authentication issues on product detail pages
-- ✅ Updated middleware configuration for proper route protection
-- ✅ Converted product detail page to client-side rendering
-- ✅ Fixed header component integration
+2. **Verify Setup**
+   - Check all environment variables are set
+   - Test authentication and payment flows
+   - Verify database connections
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+We welcome contributions! Please follow these steps:
 
-## 📄 License
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
-This project is licensed under the MIT License.
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Use consistent code formatting
+- Write meaningful commit messages
+- Test your changes thoroughly
+- Update documentation as needed
 
 ## 🆘 Support
 
-If you encounter any issues:
+### Common Issues
 
-1. Check the environment variables are set correctly
-2. Ensure MongoDB is accessible
-3. Verify Stripe and Cloudinary credentials
-4. Check the browser console for errors
+1. **Environment Variables**
+   - Ensure all required variables are set
+   - Check for typos in variable names
+   - Verify values are correct
 
-For additional help, please open an issue on GitHub.
+2. **Database Connection**
+   - Verify MongoDB URI is correct
+   - Check network connectivity
+   - Ensure database user has proper permissions
+
+3. **Authentication Issues**
+   - Verify NextAuth configuration
+   - Check session handling
+   - Ensure proper redirect URLs
+
+### Getting Help
+
+- **GitHub Issues** - Report bugs and request features
+- **Documentation** - Check this README and code comments
+- **Community** - Join our Discord/community channels
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Next.js Team** - For the amazing framework
+- **Vercel** - For hosting and deployment
+- **Tailwind CSS** - For the utility-first CSS framework
+- **Stripe** - For secure payment processing
+- **Cloudinary** - For image management
 
 ---
 
-**Last Updated**: December 2024 - Fixed authentication and deployment issues
+**Last Updated**: December 2024  
+**Version**: 0.1.0  
+**Maintainer**: SupplierHub Team
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by the SupplierHub Team</p>
+  <p>If this project helps you, please give it a ⭐</p>
+</div>

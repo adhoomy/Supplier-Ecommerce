@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Product from '@/lib/models/Product';
+import { verifyAdminAuth } from '@/lib/auth';
 
 const dummyProducts = [
   {
@@ -247,6 +248,23 @@ const dummyProducts = [
 
 export async function POST(request: NextRequest) {
   try {
+    // Prevent seeding in production environments
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({
+        success: false,
+        message: 'Seeding is disabled in production environments for security reasons.',
+      }, { status: 403 });
+    }
+
+    // Verify that the current user is an admin
+    const authResult = await verifyAdminAuth(request);
+    if (!authResult.isAdmin) {
+      return NextResponse.json({
+        success: false,
+        message: 'Admin authentication required to seed database.',
+      }, { status: 403 });
+    }
+
     await connectDB();
     
     // Check if products already exist
@@ -289,8 +307,25 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   try {
+    // Prevent deletion in production environments
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({
+        success: false,
+        message: 'Database clearing is disabled in production environments for security reasons.',
+      }, { status: 403 });
+    }
+
+    // Verify that the current user is an admin
+    const authResult = await verifyAdminAuth(request);
+    if (!authResult.isAdmin) {
+      return NextResponse.json({
+        success: false,
+        message: 'Admin authentication required to clear database.',
+      }, { status: 403 });
+    }
+
     await connectDB();
     
     // Delete all products
@@ -315,8 +350,17 @@ export async function DELETE() {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Verify that the current user is an admin
+    const authResult = await verifyAdminAuth(request);
+    if (!authResult.isAdmin) {
+      return NextResponse.json({
+        success: false,
+        message: 'Admin authentication required to view database status.',
+      }, { status: 403 });
+    }
+
     await connectDB();
     
     const totalProducts = await Product.countDocuments();

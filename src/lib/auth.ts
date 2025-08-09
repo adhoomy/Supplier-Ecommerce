@@ -3,8 +3,29 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
+import { NextRequest } from "next/server";
 
 const client = new MongoClient(process.env.MONGODB_URI!);
+
+// Helper function to verify admin authentication
+export async function verifyAdminAuth(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session || !session.user) {
+      return { isAdmin: false, error: "Not authenticated" };
+    }
+    
+    if (session.user.role !== "admin") {
+      return { isAdmin: false, error: "Insufficient privileges" };
+    }
+    
+    return { isAdmin: true, user: session.user };
+  } catch (error) {
+    return { isAdmin: false, error: "Authentication error" };
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(client),

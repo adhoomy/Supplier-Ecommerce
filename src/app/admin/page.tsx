@@ -4,6 +4,7 @@ import { useState } from "react";
 import UserManagement from "@/components/admin/UserManagement";
 import ProductManagement from "@/components/admin/ProductManagement";
 import OrderManagement from "@/components/admin/OrderManagement";
+import DatabaseManagement from "@/components/admin/DatabaseManagement";
 import AdminProtected from "@/components/admin/AdminProtected";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -64,6 +65,16 @@ export default function AdminPage() {
               >
                 Create Admin
               </a>
+              <button
+                onClick={() => setActiveTab("database")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "database"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                Database
+              </button>
             </nav>
           </div>
 
@@ -158,6 +169,22 @@ export default function AdminPage() {
                       System Status
                     </button>
                   </div>
+
+                  {/* Database Management Card */}
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-indigo-900 mb-3 sm:mb-4">
+                      Database Management
+                    </h3>
+                    <p className="text-indigo-700 mb-4 text-sm sm:text-base">
+                      Manage database seeding and clearing operations
+                    </p>
+                    <button 
+                      onClick={() => setActiveTab("database")}
+                      className="bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm sm:text-base"
+                    >
+                      Database
+                    </button>
+                  </div>
                 </div>
 
                 {/* Admin Info */}
@@ -198,6 +225,10 @@ export default function AdminPage() {
 
           {activeTab === "orders" && (
             <OrderManagement />
+          )}
+
+          {activeTab === "database" && (
+            <DatabaseManagement />
           )}
         </div>
       </div>

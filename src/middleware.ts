@@ -1,6 +1,10 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
+/**
+ * Next.js middleware for route protection
+ * Uses NextAuth.js withAuth wrapper for authentication
+ */
 export default withAuth(
   function middleware(req) {
     // Add custom middleware logic here if needed
@@ -9,14 +13,18 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Protect admin routes
-        if (req.nextUrl?.pathname?.startsWith("/admin")) {
+        const pathname = req.nextUrl?.pathname;
+        
+        // Protect admin routes - requires admin role
+        if (pathname?.startsWith("/admin")) {
           return token?.role === "admin";
         }
+        
         // Protect checkout and orders routes - requires authentication
-        if (req.nextUrl?.pathname?.startsWith("/checkout") || req.nextUrl?.pathname?.startsWith("/orders")) {
+        if (pathname?.startsWith("/checkout") || pathname?.startsWith("/orders")) {
           return !!token; // Must be authenticated
         }
+        
         // Allow all other routes
         return true;
       },
@@ -30,12 +38,13 @@ export default withAuth(
 export const config = {
   matcher: [
     /*
-     * Only apply middleware to specific protected routes
+     * Apply middleware to protected routes only
+     * This improves performance by not running middleware on public routes
      */
-    "/admin/:path*",
-    "/checkout/:path*", 
-    "/orders/:path*",
-    "/profile/:path*",
-    "/cart/:path*"
+    "/admin/:path*",    // Admin panel routes
+    "/checkout/:path*", // Checkout process
+    "/orders/:path*",   // Order management
+    "/profile/:path*",  // User profile
+    "/cart/:path*"      // Shopping cart
   ],
 }; 

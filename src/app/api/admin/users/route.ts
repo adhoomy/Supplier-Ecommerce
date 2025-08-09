@@ -62,15 +62,28 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (!["user", "admin", "supplier"].includes(role)) {
+    // Prevent role changes to admin - only allow user or supplier roles
+    if (!["user", "supplier"].includes(role)) {
       return NextResponse.json(
-        { error: "Invalid role. Must be 'user', 'admin', or 'supplier'" },
+        { error: "Invalid role. Only 'user' or 'supplier' roles can be assigned. Admin roles must be created through the proper admin creation process." },
         { status: 400 }
       );
     }
 
     await client.connect();
     const db = client.db();
+    
+    // Check if the target user is currently an admin
+    const targetUser = await db.collection("users").findOne(
+      { _id: new MongoClient.ObjectId(userId) }
+    );
+    
+    if (targetUser?.role === "admin") {
+      return NextResponse.json(
+        { error: "Cannot modify admin user roles through this endpoint. Admin roles must be managed through the dedicated admin creation process." },
+        { status: 403 }
+      );
+    }
     
     // Update user role
     const result = await db.collection("users").updateOne(
