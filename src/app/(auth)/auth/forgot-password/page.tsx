@@ -57,7 +57,7 @@ export default function ForgotPassword() {
 
           {resetUrl && (
             <div className="text-blue-600 text-sm text-center bg-blue-50 p-4 rounded-md">
-              <p className="font-medium mb-2">Development Mode:</p>
+              <p className="font-medium mb-2">🔧 Development Mode</p>
               <p className="mb-2">Click the link below to reset your password:</p>
               <a
                 href={resetUrl}
@@ -67,9 +67,15 @@ export default function ForgotPassword() {
               >
                 {resetUrl}
               </a>
-              <p className="mt-2 text-xs text-gray-600">
-                Note: In production, this would be sent via email.
-              </p>
+              <div className="mt-3 p-3 bg-yellow-50 rounded border border-yellow-200">
+                <p className="text-sm text-yellow-800 mb-2">
+                  <strong>💡 To receive actual emails:</strong>
+                </p>
+                <p className="text-xs text-yellow-700">
+                  1. Add Gmail credentials to your <code>.env.local</code><br/>
+                  2. See <code>EMAIL_SETUP.md</code> for detailed instructions
+                </p>
+              </div>
             </div>
           )}
 
