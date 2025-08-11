@@ -4,9 +4,10 @@ interface AlertProps {
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
   onClose?: () => void;
+  className?: string;
 }
 
-export default function Alert({ type, message, onClose }: AlertProps) {
+export default function Alert({ type, message, onClose, className }: AlertProps) {
   const getAlertStyles = () => {
     switch (type) {
       case 'success':
@@ -51,7 +52,7 @@ export default function Alert({ type, message, onClose }: AlertProps) {
   const IconComponent = styles.iconComponent;
 
   return (
-    <div className={`border rounded-md p-4 flex items-center gap-2 ${styles.container}`}>
+    <div className={`border rounded-md p-4 flex items-center gap-2 ${styles.container} ${className || ''}`}>
       <IconComponent className={styles.icon} size={20} />
       <span className={`flex-1 ${styles.text}`}>{message}</span>
       {onClose && (

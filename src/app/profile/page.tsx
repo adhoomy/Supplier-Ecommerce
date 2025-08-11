@@ -3,14 +3,16 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useUserState } from "@/hooks/useUserState";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import PasswordChangeModal from "@/components/profile/PasswordChangeModal";
 
 export default function ProfilePage() {
   const { isAuthenticated, user, status } = useAuth();
   const { userProfile } = useUserState();
   const router = useRouter();
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -77,7 +79,10 @@ export default function ProfilePage() {
                   <div className="font-medium text-gray-900">Edit Profile</div>
                   <div className="text-sm text-gray-600">Update your personal information</div>
                 </button>
-                <button className="w-full text-left px-4 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                <button 
+                  onClick={() => setIsPasswordModalOpen(true)}
+                  className="w-full text-left px-4 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
                   <div className="font-medium text-gray-900">Change Password</div>
                   <div className="text-sm text-gray-600">Update your account password</div>
                 </button>
@@ -112,6 +117,11 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+      
+      <PasswordChangeModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </div>
   );
 }
