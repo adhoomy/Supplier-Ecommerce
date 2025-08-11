@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { usePasswordReset } from "@/hooks/usePasswordReset";
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [token, setToken] = useState("");
@@ -156,8 +156,20 @@ export default function ResetPassword() {
               Back to sign in
             </Link>
           </div>
-        </form>
+                 </form>
+       </div>
+     </div>
+   );
+ }
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
       </div>
-    </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
