@@ -51,26 +51,47 @@ export async function POST(request: NextRequest) {
     const resetUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3001"}/auth/reset-password?token=${resetToken}`;
     
     // Send password reset email
-    const emailService = EmailService.getInstance();
-    const emailSent = await emailService.sendPasswordResetEmail(user.email, resetUrl);
-    
-    if (process.env.NODE_ENV === "development") {
-      return NextResponse.json(
-        { 
-          message: "Password reset link generated successfully",
-          resetUrl, // Only in development
-          note: "In production, this would be sent via email"
-        },
-        { status: 200 }
-      );
-    }
+    try {
+      const emailService = EmailService.getInstance();
+      const emailSent = await emailService.sendPasswordResetEmail(user.email, resetUrl);
+      
+      if (process.env.NODE_ENV === "development") {
+        return NextResponse.json(
+          { 
+            message: "Password reset link generated successfully",
+            resetUrl, // Only in development
+            note: "In production, this would be sent via email"
+          },
+          { status: 200 }
+        );
+      }
 
-    if (emailSent) {
-      return NextResponse.json(
-        { message: "If an account with that email exists, a password reset link has been sent." },
-        { status: 200 }
-      );
-    } else {
+      if (emailSent) {
+        return NextResponse.json(
+          { message: "If an account with that email exists, a password reset link has been sent." },
+          { status: 200 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: "Failed to send password reset email. Please try again." },
+          { status: 500 }
+        );
+      }
+    } catch (emailError) {
+      console.error("Email service error:", emailError);
+      
+      // In development, still return the reset URL even if email fails
+      if (process.env.NODE_ENV === "development") {
+        return NextResponse.json(
+          { 
+            message: "Password reset link generated successfully (email failed)",
+            resetUrl,
+            note: "Email service error occurred, but reset link is available"
+          },
+          { status: 200 }
+        );
+      }
+      
       return NextResponse.json(
         { error: "Failed to send password reset email. Please try again." },
         { status: 500 }

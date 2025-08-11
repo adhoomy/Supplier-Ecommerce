@@ -26,33 +26,40 @@ export class EmailService {
   }
 
   private initializeTransporter() {
-    if (process.env.NODE_ENV === "development") {
-      // For development, use Gmail SMTP (you'll need to set up app passwords)
-      if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-        this.transporter = nodemailer.createTransporter({
-          service: "gmail",
-          auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD,
-          },
-        });
+    try {
+      if (process.env.NODE_ENV === "development") {
+        // For development, use Gmail SMTP (you'll need to set up app passwords)
+        if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+          this.transporter = nodemailer.createTransporter({
+            service: "gmail",
+            auth: {
+              user: process.env.GMAIL_USER,
+              pass: process.env.GMAIL_APP_PASSWORD,
+            },
+          });
+          console.log("✅ Gmail SMTP transporter initialized successfully");
+        } else {
+          console.log("⚠️  Gmail credentials not found. Emails will be logged to console only.");
+          console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD in .env.local to enable email sending");
+        }
       } else {
-        console.log("⚠️  Gmail credentials not found. Emails will be logged to console only.");
-        console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD in .env.local to enable email sending");
+        // For production, configure your preferred email service
+        if (process.env.SMTP_HOST) {
+          this.transporter = nodemailer.createTransporter({
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT || "587"),
+            secure: process.env.SMTP_SECURE === "true",
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASS,
+            },
+          });
+          console.log("✅ SMTP transporter initialized successfully");
+        }
       }
-    } else {
-      // For production, configure your preferred email service
-      if (process.env.SMTP_HOST) {
-        this.transporter = nodemailer.createTransporter({
-          host: process.env.SMTP_HOST,
-          port: parseInt(process.env.SMTP_PORT || "587"),
-          secure: process.env.SMTP_SECURE === "true",
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-          },
-        });
-      }
+    } catch (error) {
+      console.error("❌ Error initializing email transporter:", error);
+      this.transporter = null;
     }
   }
 
