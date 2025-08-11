@@ -27,36 +27,45 @@ export class EmailService {
 
   private initializeTransporter() {
     try {
-      if (process.env.NODE_ENV === "development") {
-        // For development, use Gmail SMTP (you'll need to set up app passwords)
-        if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-          this.transporter = nodemailer.createTransporter({
-            service: "gmail",
-            auth: {
-              user: process.env.GMAIL_USER,
-              pass: process.env.GMAIL_APP_PASSWORD,
-            },
-          });
-          console.log("✅ Gmail SMTP transporter initialized successfully");
-        } else {
-          console.log("⚠️  Gmail credentials not found. Emails will be logged to console only.");
-          console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD in .env.local to enable email sending");
-        }
-      } else {
-        // For production, configure your preferred email service
-        if (process.env.SMTP_HOST) {
-          this.transporter = nodemailer.createTransporter({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT || "587"),
-            secure: process.env.SMTP_SECURE === "true",
-            auth: {
-              user: process.env.SMTP_USER,
-              pass: process.env.SMTP_PASS,
-            },
-          });
-          console.log("✅ SMTP transporter initialized successfully");
-        }
+      // Priority 1: Use Gmail SMTP if credentials are available (works in both dev and production)
+      if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+        this.transporter = nodemailer.createTransporter({
+          service: "gmail",
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+          },
+        });
+        console.log("✅ Gmail SMTP transporter initialized successfully");
+        return;
       }
+      
+      // Priority 2: Use custom SMTP if configured
+      if (process.env.SMTP_HOST) {
+        this.transporter = nodemailer.createTransporter({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || "587"),
+          secure: process.env.SMTP_SECURE === "true",
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        });
+        console.log("✅ Custom SMTP transporter initialized successfully");
+        return;
+      }
+      
+      // Priority 3: Fallback - no transporter available
+      if (process.env.NODE_ENV === "development") {
+        console.log("⚠️  No email credentials found. Emails will be logged to console only.");
+        console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD to enable Gmail SMTP");
+        console.log("   Or set SMTP_HOST, SMTP_USER, SMTP_PASS for custom SMTP");
+      } else {
+        console.log("⚠️  No email credentials found. Password reset emails will not be sent.");
+        console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD to enable Gmail SMTP");
+        console.log("   Or set SMTP_HOST, SMTP_USER, SMTP_PASS for custom SMTP");
+      }
+      
     } catch (error) {
       console.error("❌ Error initializing email transporter:", error);
       this.transporter = null;
