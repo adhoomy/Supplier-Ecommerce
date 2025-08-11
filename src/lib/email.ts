@@ -1,0 +1,115 @@
+// Simple email utility for password reset functionality
+// In production, this would integrate with services like SendGrid, AWS SES, or Nodemailer
+
+export interface EmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+}
+
+export class EmailService {
+  private static instance: EmailService;
+
+  private constructor() {}
+
+  public static getInstance(): EmailService {
+    if (!EmailService.instance) {
+      EmailService.instance = new EmailService();
+    }
+    return EmailService.instance;
+  }
+
+  async sendPasswordResetEmail(email: string, resetUrl: string): Promise<boolean> {
+    try {
+      const emailOptions: EmailOptions = {
+        to: email,
+        subject: "Password Reset Request",
+        html: this.generatePasswordResetHTML(resetUrl),
+        text: this.generatePasswordResetText(resetUrl),
+      };
+
+      // In development, just log the email
+      if (process.env.NODE_ENV === "development") {
+        console.log("=== PASSWORD RESET EMAIL (DEV MODE) ===");
+        console.log("To:", emailOptions.to);
+        console.log("Subject:", emailOptions.subject);
+        console.log("Reset URL:", resetUrl);
+        console.log("HTML Content:", emailOptions.html);
+        console.log("=====================================");
+        return true;
+      }
+
+      // In production, this would send the actual email
+      // await this.sendEmail(emailOptions);
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to send password reset email:", error);
+      return false;
+    }
+  }
+
+  private generatePasswordResetHTML(resetUrl: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Password Reset Request</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background-color: #f8f9fa; padding: 30px; border-radius: 8px;">
+            <h1 style="color: #2563eb; margin-bottom: 20px;">Password Reset Request</h1>
+            
+            <p>You recently requested to reset your password. Click the button below to reset it:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">
+                Reset Password
+              </a>
+            </div>
+            
+            <p>If you didn't request this, you can safely ignore this email.</p>
+            
+            <p>This password reset link will expire in 1 hour.</p>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+            
+            <p style="font-size: 14px; color: #6b7280;">
+              If the button above doesn't work, copy and paste this link into your browser:<br>
+              <a href="${resetUrl}" style="color: #2563eb;">${resetUrl}</a>
+            </p>
+          </div>
+        </body>
+      </html>
+    `;
+  }
+
+  private generatePasswordResetText(resetUrl: string): string {
+    return `
+Password Reset Request
+
+You recently requested to reset your password. Click the link below to reset it:
+
+${resetUrl}
+
+If you didn't request this, you can safely ignore this email.
+
+This password reset link will expire in 1 hour.
+
+If the link above doesn't work, copy and paste it into your address bar.
+    `;
+  }
+
+  // Placeholder for actual email sending implementation
+  // private async sendEmail(options: EmailOptions): Promise<void> {
+  //   // Implementation would go here for production
+  //   // Examples:
+  //   // - SendGrid: https://sendgrid.com/docs/for-developers/sending-email/v3-nodejs-code-example/
+  //   // - AWS SES: https://docs.aws.amazon.com/ses/latest/dg/send-email-raw.html
+  //   // - Nodemailer: https://nodemailer.com/
+  //   throw new Error("Email sending not implemented");
+  // }
+}

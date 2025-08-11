@@ -32,6 +32,7 @@ A modern, full-stack e-commerce platform built for business supplies and equipme
 - **NextAuth.js Integration** - JWT-based authentication
 - **Role-Based Access** - User and Admin roles with proper permissions
 - **Password Security** - Strong password requirements and validation
+- **Password Recovery** - Secure password reset via email with token expiration
 
 ### 👨‍💼 Admin Panel
 - **Product Management** - Add, edit, and delete products
@@ -119,10 +120,14 @@ supplier-ecommerce/
 │   │   ├── api/               # API routes
 │   │   │   ├── admin/         # Admin API endpoints
 │   │   │   ├── auth/          # Authentication endpoints
+│   │   │   │   ├── forgot-password/  # Password reset request
+│   │   │   │   └── reset-password/   # Password reset confirmation
 │   │   │   ├── products/      # Product management
 │   │   │   ├── orders/        # Order processing
 │   │   │   └── payment/       # Stripe integration
 │   │   ├── (auth)/            # Authentication pages
+│   │   │   ├── forgot-password/      # Password reset request page
+│   │   │   └── reset-password/       # Password reset confirmation page
 │   │   ├── admin/             # Admin panel
 │   │   ├── products/          # Product pages
 │   │   └── ...                # Other pages
@@ -133,7 +138,9 @@ supplier-ecommerce/
 │   │   ├── product/          # Product components
 │   │   └── ui/               # UI components
 │   ├── hooks/                # Custom React hooks
+│   │   └── usePasswordReset.ts # Password reset functionality
 │   ├── lib/                  # Utility libraries
+│   │   └── email.ts          # Email service utilities
 │   ├── store/                # Zustand state management
 │   └── types/                # TypeScript definitions
 ├── public/                   # Static assets
@@ -180,6 +187,32 @@ supplier-ecommerce/
 2. Get your cloud name, API key, and secret
 3. Add credentials to environment variables
 
+### Email Service Setup (Optional)
+
+For production password reset emails, configure one of these services:
+
+1. **SendGrid**
+   ```env
+   SENDGRID_API_KEY=your_sendgrid_api_key
+   ```
+
+2. **AWS SES**
+   ```env
+   AWS_ACCESS_KEY_ID=your_aws_access_key
+   AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+   AWS_REGION=your_aws_region
+   ```
+
+3. **Nodemailer (SMTP)**
+   ```env
+   SMTP_HOST=your_smtp_host
+   SMTP_PORT=587
+   SMTP_USER=your_smtp_username
+   SMTP_PASS=your_smtp_password
+   ```
+
+**Note**: In development mode, password reset links are displayed in the UI for testing purposes.
+
 ## 🛡️ Security Features
 
 ### Database Protection
@@ -192,12 +225,59 @@ supplier-ecommerce/
 - **Email Validation** - Comprehensive email verification
 - **Role-Based Access** - Strict permission controls
 - **Session Management** - Secure JWT handling
+- **Password Recovery** - Secure token-based password reset with 1-hour expiration
 
 ### API Security
 - **Middleware Protection** - Critical routes protected by auth
 - **Input Validation** - All user inputs validated and sanitized
 - **Rate Limiting** - Protection against abuse
 - **CORS Configuration** - Proper cross-origin handling
+
+## 🔐 Password Recovery System
+
+The platform includes a comprehensive password recovery system that allows users to securely reset their passwords when logged out.
+
+### How It Works
+
+1. **Password Reset Request**
+   - User visits `/auth/forgot-password`
+   - Enters their email address
+   - System generates a secure, time-limited reset token
+   - Reset link is sent via email (or displayed in development mode)
+
+2. **Password Reset Process**
+   - User clicks the reset link from their email
+   - Link contains a secure token with 1-hour expiration
+   - User enters and confirms new password
+   - System validates token and updates password
+   - User is redirected to login page
+
+### Security Features
+
+- **Token Expiration**: Reset tokens expire after 1 hour
+- **Single Use**: Tokens are invalidated after password reset
+- **Secure Generation**: Uses cryptographically secure random tokens
+- **Email Verification**: Tokens are only sent to registered email addresses
+- **No User Enumeration**: System doesn't reveal if an email exists
+
+### Development vs Production
+
+- **Development Mode**: Reset links are displayed in the UI for testing
+- **Production Mode**: Reset links are sent via email service
+- **Email Service**: Ready for integration with SendGrid, AWS SES, or Nodemailer
+
+### API Endpoints
+
+- `POST /api/auth/forgot-password` - Request password reset
+- `POST /api/auth/reset-password` - Confirm password reset
+
+### Custom Hook
+
+The `usePasswordReset` hook provides a clean interface for managing password reset state and API calls:
+
+```typescript
+const { isLoading, message, error, resetUrl, requestPasswordReset, resetPassword } = usePasswordReset();
+```
 
 ## 🚀 Deployment
 
