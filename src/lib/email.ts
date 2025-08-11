@@ -25,49 +25,41 @@ export class EmailService {
     return EmailService.instance;
   }
 
-  private initializeTransporter() {
+    private initializeTransporter() {
     try {
-             // Priority 1: Use Gmail SMTP if credentials are available (works in both dev and production)
-       if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-         this.transporter = nodemailer.createTransport({
-           service: "gmail",
-           auth: {
-             user: process.env.GMAIL_USER,
-             pass: process.env.GMAIL_APP_PASSWORD,
-           },
-         });
-         console.log("✅ Gmail SMTP transporter initialized successfully");
-         return;
-       }
+      // Priority 1: Use Gmail SMTP if credentials are available (works in both dev and production)
+      if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+        this.transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_APP_PASSWORD,
+          },
+        });
+        return;
+      }
       
-             // Priority 2: Use custom SMTP if configured
-       if (process.env.SMTP_HOST) {
-         this.transporter = nodemailer.createTransport({
-           host: process.env.SMTP_HOST,
-           port: parseInt(process.env.SMTP_PORT || "587"),
-           secure: process.env.SMTP_SECURE === "true",
-           auth: {
-             user: process.env.SMTP_USER,
-             pass: process.env.SMTP_PASS,
-           },
-         });
-         console.log("✅ Custom SMTP transporter initialized successfully");
-         return;
-       }
+      // Priority 2: Use custom SMTP if configured
+      if (process.env.SMTP_HOST) {
+        this.transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || "587"),
+          secure: process.env.SMTP_SECURE === "true",
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        });
+        return;
+      }
       
       // Priority 3: Fallback - no transporter available
       if (process.env.NODE_ENV === "development") {
         console.log("⚠️  No email credentials found. Emails will be logged to console only.");
-        console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD to enable Gmail SMTP");
-        console.log("   Or set SMTP_HOST, SMTP_USER, SMTP_PASS for custom SMTP");
-      } else {
-        console.log("⚠️  No email credentials found. Password reset emails will not be sent.");
-        console.log("   Set GMAIL_USER and GMAIL_APP_PASSWORD to enable Gmail SMTP");
-        console.log("   Or set SMTP_HOST, SMTP_USER, SMTP_PASS for custom SMTP");
       }
       
     } catch (error) {
-      console.error("❌ Error initializing email transporter:", error);
+      console.error("Error initializing email transporter:", error);
       this.transporter = null;
     }
   }
@@ -90,17 +82,13 @@ export class EmailService {
           html: emailOptions.html,
           text: emailOptions.text,
         });
-        console.log("✅ Password reset email sent successfully to:", email);
         return true;
       }
 
       // Fallback: log to console in development
       if (process.env.NODE_ENV === "development") {
-        console.log("=== PASSWORD RESET EMAIL (DEV MODE - NO TRANSPORTER) ===");
-        console.log("To:", emailOptions.to);
-        console.log("Subject:", emailOptions.subject);
+        console.log("Password reset email would be sent to:", email);
         console.log("Reset URL:", resetUrl);
-        console.log("=====================================");
         return true;
       }
 
