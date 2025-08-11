@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+    
+    console.log("Session data:", session);
+    console.log("User ID:", session?.user?.id);
     
     if (!session || !session.user) {
       return NextResponse.json(
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Get current user with password
     const user = await db.collection("users").findOne({
-      _id: session.user.id,
+      _id: new ObjectId(session.user.id),
     });
 
     if (!user) {
