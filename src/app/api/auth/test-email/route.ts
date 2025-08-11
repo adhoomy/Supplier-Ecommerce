@@ -5,6 +5,12 @@ export async function GET() {
   try {
     console.log("🧪 Testing email service...");
     
+    // Log all environment variables for debugging
+    console.log("Environment variables:");
+    console.log("- NODE_ENV:", process.env.NODE_ENV);
+    console.log("- GMAIL_USER:", process.env.GMAIL_USER ? "SET" : "NOT SET");
+    console.log("- GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD ? "SET (" + process.env.GMAIL_APP_PASSWORD.length + " chars)" : "NOT SET");
+    
     // Test email service initialization
     const emailService = EmailService.getInstance();
     
@@ -20,6 +26,7 @@ export async function GET() {
       environment: process.env.NODE_ENV,
       hasGmailUser: !!process.env.GMAIL_USER,
       hasGmailPassword: !!process.env.GMAIL_APP_PASSWORD,
+      gmailPasswordLength: process.env.GMAIL_APP_PASSWORD?.length || 0,
       message: "Email service test completed"
     });
     
@@ -32,7 +39,8 @@ export async function GET() {
       stack: error instanceof Error ? error.stack : undefined,
       environment: process.env.NODE_ENV,
       hasGmailUser: !!process.env.GMAIL_USER,
-      hasGmailPassword: !!process.env.GMAIL_APP_PASSWORD
+      hasGmailPassword: !!process.env.GMAIL_APP_PASSWORD,
+      gmailPasswordLength: process.env.GMAIL_APP_PASSWORD?.length || 0
     }, { status: 500 });
   }
 }
